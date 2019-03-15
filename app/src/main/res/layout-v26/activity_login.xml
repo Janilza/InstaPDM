@@ -17,10 +17,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/MyStepsLogoMaior" />
+        app:srcCompat="@drawable/logo_maior" />
 
     <EditText
-        android:id="@+id/login email"
+        android:id="@+id/login_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -29,7 +29,7 @@
         android:autofillHints=""
         android:contentDescription="@string/insertEmail"
         android:ems="10"
-        android:hint="@string/insertEmail"
+        android:hint="@string/insert_email"
         android:inputType="textEmailAddress"
         android:padding="16dp"
         android:textSize="14sp"
@@ -52,7 +52,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login email" />
+        app:layout_constraintTop_toBottomOf="@+id/login_email" />
 
     <Button
         android:id="@+id/loginButton"
