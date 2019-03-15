@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "873577843311",
+    "firebase_url": "https://instapdm.firebaseio.com",
+    "project_id": "instapdm",
+    "storage_bucket": "instapdm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873577843311:android:291194b7024e799e",
+        "android_client_info": {
+          "package_name": "ipg.estg.mcm.instapdm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873577843311-aarh9qv9isj2te8sd1rbj0u93l7dv6i6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ipg.estg.mcm.instapdm",
+            "certificate_hash": "2f292d1f1c34ff2f8f79761f37b1487abbee287c"
+          }
+        },
+        {
+          "client_id": "873577843311-2ui3d5p6kl19vrdvlqdcq0e56356a6h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKkrgDwpjEHsbS2x93zd3n_8YZtjZyCJc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873577843311-2ui3d5p6kl19vrdvlqdcq0e56356a6h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
