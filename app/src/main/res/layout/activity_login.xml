@@ -20,7 +20,7 @@
         app:srcCompat="@drawable/logo_maior" />
 
     <EditText
-        android:id="@+id/login_email"
+        android:id="@+id/register_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/loginLogo" />
 
     <EditText
-        android:id="@+id/loginPassword"
+        android:id="@+id/repeat_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -52,7 +52,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_email" />
+        app:layout_constraintTop_toBottomOf="@+id/register_email" />
 
     <Button
         android:id="@+id/loginButton"
@@ -70,7 +70,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/repeat_password" />
 
     <Button
         android:id="@+id/loginRegister"

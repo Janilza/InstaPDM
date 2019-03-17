@@ -7,4 +7,7 @@
     <string name="register_text">Ainda não possui uma conta?</string>
     <string name="loginbutton">LoginButton</string>
     <string name="entrar">Entrar</string>
+    <string name="create_account">Criar uma nova conta</string>
+    <string name="have_account">Já tem uma conta?</string>
+    <string name="repeat_password">Repita a password</string>
 </resources>
