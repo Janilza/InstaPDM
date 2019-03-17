@@ -6,7 +6,21 @@
         android:id="@+id/actionLogout"
         android:enabled="true"
         android:icon="@mipmap/logout_logo"
-        android:title="Item"
+        android:title="@string/logout"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/account_settings"
+        android:enabled="true"
+        android:icon="@mipmap/info_logo"
+        android:title="@string/account_settings"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/about"
+        android:enabled="true"
+        android:icon="@mipmap/account_settings_logo"
+        android:title="@string/about"
         android:visible="true"
         app:showAsAction="always" />
 </menu>

@@ -10,4 +10,7 @@
     <string name="create_account">Criar uma nova conta</string>
     <string name="have_account">Já tem uma conta?</string>
     <string name="repeat_password">Repita a password</string>
+    <string name="about">Sobre</string>
+    <string name="account_settings">Definições de conta</string>
+    <string name="logout">Logout</string>
 </resources>
