@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/actionLogout"
+        android:enabled="true"
+        android:icon="@mipmap/logout_logo"
+        android:title="@string/logout"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/edit_profile"
+        android:enabled="true"
+        android:icon="@mipmap/info_logo"
+        android:title="@string/account_settings"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/about"
+        android:enabled="true"
+        android:icon="@mipmap/account_settings_logo"
+        android:title="@string/about"
+        android:visible="true"
+        app:showAsAction="always" />
+</menu>
