@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InstaPDM</string>
+    <string name="app_name">My Steps</string>
     <string name="loginpagelogo">LoginPageLogo</string>
     <string name="insert_email">Insira o seu email</string>
     <string name="insert_password">Insira a sua password</string>
