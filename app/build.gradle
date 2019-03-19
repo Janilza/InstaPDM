@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'mystepkey1'
+            keyPassword '123456'
+            storeFile file('C://Users/HP/MySteps.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "ipg.estg.mcm.instapdm"
@@ -29,4 +37,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.firebase:firebase-auth:16.2.0'
     implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.android.gms:play-services-fitness:16.0.1'
+
 }
