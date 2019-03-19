@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SetupActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".MainActivity"

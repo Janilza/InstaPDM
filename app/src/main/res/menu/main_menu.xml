@@ -10,7 +10,7 @@
         android:visible="true"
         app:showAsAction="always" />
     <item
-        android:id="@+id/account_settings"
+        android:id="@+id/edit_profile"
         android:enabled="true"
         android:icon="@mipmap/info_logo"
         android:title="@string/account_settings"
