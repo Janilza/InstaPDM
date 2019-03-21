@@ -1,7 +1,12 @@
 package ipg.estg.mcm.instapdm;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,36 +14,59 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.request.OnDataPointListener;
+import com.google.android.gms.fitness.result.DailyTotalResult;
+import com.google.android.gms.fitness.result.DataReadResponse;
+import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks{
+import static java.text.DateFormat.getDateInstance;
+import static android.content.ContentValues.TAG;
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private FirebaseAuth mAuth;
     private Toolbar mainToolbar;
     private GoogleApiClient mClient;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-    private String selectedDate;
+    private Context context = MainActivity.this;
+
+    //Google APIClient
+    private boolean authInProgress = false;
+    private static final String AUTH_PENDING = "auth_state_pending";
+    private static final int REQUEST_OAUTH = 1;
+    public static final String TAG ="My steps";
+
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView((int) R.layout.activity_main);
         createFitnessClient();
-        //todo: alterar ppara obetr de um calendario, o user seleciona  data que pretende
-        selectedDate = Calendar.getInstance().getTime().toString(); //o dia de hoje??
     }
 
     public void onStart() {
@@ -51,16 +79,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+        mClient.connect();
     }
 
     private void createFitnessClient() {
         // Create the Google API Client
+        Log.i(TAG, "Create Fitness client start");
         mClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                 .addConnectionCallbacks(this)
                 .useDefaultAccount().build();
-        mClient.connect();
+        Log.i(TAG, "Create Fitness client end");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (menuItem.getItemId() != R.id.actionLogout) {
             return false;
         }
+        //new VerifyDataTask().execute();
+
         logOut();
+
         return true;
     }
 
@@ -88,75 +121,135 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        getData(selectedDate);
+
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        long endTime = cal.getTimeInMillis();
+        cal.add(Calendar.WEEK_OF_YEAR, -1);
+        long startTime = cal.getTimeInMillis();
+
+        java.text.DateFormat dateFormat = getDateInstance();
+
+        Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
+        Log.i(TAG, "Range End: " + dateFormat.format(endTime));
+
+
+        /*final DataSource ds = new DataSource.Builder()
+                .setAppPackageName("com.google.android.gms")
+                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                .setType(DataSource.TYPE_DERIVED)
+                .setStreamName("estimated_steps")
+                .build();*/
+
+
+        DataReadRequest readRequest = new DataReadRequest.Builder()
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .bucketByTime(1, TimeUnit.DAYS)
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .build();
+
+        PendingResult<DataReadResult> pendingResult = Fitness.HistoryApi.readData(mClient, readRequest);
+        pendingResult.setResultCallback(
+                new ResultCallback<DataReadResult>() {
+                    @Override
+                    public void onResult(@NonNull DataReadResult dataReadResult) {
+                        if(dataReadResult.getBuckets().size() > 0){
+                            for(Bucket bucket : dataReadResult.getBuckets()){
+                                List<DataSet> dataSets = bucket.getDataSets();
+                                for (DataSet dataSet : dataSets){
+                                    processDataSet(dataSet);
+                                }
+                            }
+                        }
+                    }
+                }
+        );
+
+        //new VerifyDataTask();
     }
-    public void getData(String date) {
-        if (mClient != null && mClient.isConnected() && mClient.hasConnectedApi(Fitness.HISTORY_API)) {
+    public void processDataSet(DataSet dataSet){
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        dateFormat.setTimeZone(TimeZone.getDefault());
+        for(DataPoint dp : dataSet.getDataPoints()){
 
+            //long dpStart = dp.getStartTime();
+            //long dpEnd = dp.getEndTime();
+            Log.i(TAG, "Data point");
+            Log.i(TAG, "\tType: "+ dp.getDataType().getName());
+            Log.i(TAG, "\tStart: "+ dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.i(TAG, "\tEnd: "+ dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
 
-            Date d1 = null;
-            try {
-                d1 = dateFormat.parse(date);
-            } catch (Exception ignored) {
+            for(Field field: dp.getDataType().getFields()){
+                String fieldName = field.getName();
+                Log.i(TAG, "\tField: " + fieldName + "Value: "+ dp.getValue(field));
 
+                Toast.makeText(context,"\tField"+ fieldName + "Value: "+ dp.getValue(field), Toast.LENGTH_LONG).show();
             }
-            Calendar calendar = Calendar.getInstance();
-
-            try {
-                calendar.setTime(d1);
-            } catch (Exception e) {
-                calendar.setTime(new Date());
-            }
-
-            DataReadRequest readRequest = getDataByDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            new GetDataOffline(readRequest, mClient).execute();
-
-            Log.d("HistoryAPI", "Connected");
-
-        }else{
-
-            Log.d("HistoryAPI", "Not connected");
 
         }
     }
 
-    private DataReadRequest getDataByDate(int year, int month, int day_of_Month) {
-
-        Calendar startCalendar = Calendar.getInstance(Locale.getDefault());
-
-        startCalendar.set(Calendar.YEAR, year);
-        startCalendar.set(Calendar.MONTH, month);
-        startCalendar.set(Calendar.DAY_OF_MONTH, day_of_Month);
-
-        startCalendar.set(Calendar.HOUR_OF_DAY, 23);
-        startCalendar.set(Calendar.MINUTE, 59);
-        startCalendar.set(Calendar.SECOND, 59);
-        startCalendar.set(Calendar.MILLISECOND, 999);
-        long endTime = startCalendar.getTimeInMillis();
-
-        startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        startCalendar.set(Calendar.MINUTE, 0);
-        startCalendar.set(Calendar.SECOND, 0);
-        startCalendar.set(Calendar.MILLISECOND, 0);
-        long startTime = startCalendar.getTimeInMillis();
-
-        DataSource ESTIMATED_STEP_DELTAS = new DataSource.Builder()
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setType(DataSource.TYPE_DERIVED)
-                .setStreamName("estimated_steps")
-                .setAppPackageName("com.google.android.gms")
-                .build();
-
-        return new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
-                .aggregate(ESTIMATED_STEP_DELTAS, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByActivitySegment(1, TimeUnit.MILLISECONDS)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
-    }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        //
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        if( !authInProgress ) {
+            try {
+                authInProgress = true;
+                connectionResult.startResolutionForResult( MainActivity.this, REQUEST_OAUTH );
+
+
+            } catch(IntentSender.SendIntentException e ) {
+
+            }
+        } else {
+            Log.e( "GoogleFit", "authInProgress" );
+            Toast.makeText(context,"A conexão falhou!!!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class VerifyDataTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+
+            long total = 0;
+
+            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA);
+            DailyTotalResult totalResult = result.await(30, TimeUnit.SECONDS);
+            if (totalResult.getStatus().isSuccess()) {
+                DataSet totalSet = totalResult.getTotal();
+                total = totalSet.isEmpty()
+                        ? 0
+                        : totalSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+            } else {
+                Log.w(TAG, "There was a problem getting the step count.");
+            }
+
+            Log.i(TAG, "Total steps: " + total);
+
+            return null;
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if( requestCode == REQUEST_OAUTH ) {
+            authInProgress = false;
+            if( resultCode == RESULT_OK ) {
+                if( !mClient.isConnecting() && !mClient.isConnected() ) {
+                    mClient.connect();
+                }
+            } else if( resultCode == RESULT_CANCELED ) {
+                Log.e( "GoogleFit", "RESULT_CANCELED" );
+                Log.i( "GoogleFit", "RESULT_CANCELED" );
+            }
+        } else {
+            Log.e("GoogleFit", "requestCode NOT request_oauth");
+            Log.i("GoogleFit", "requestCode NOT request_oauth");
+        }
+    }
+
 }
