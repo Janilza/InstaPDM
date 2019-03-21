@@ -7,12 +7,14 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +44,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
-    @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
+    @SuppressLint("SimpleDateFormat") private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
     private FirebaseAuth mAuth;
     private Toolbar mainToolbar;
     private GoogleApiClient mClient;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private TextView steps;
 
+    private static Calendar startDate, endDate;
+    private Calendar cal = new GregorianCalendar();
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -118,20 +122,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        Calendar cal = new GregorianCalendar();
+       // Calendar cal = new GregorianCalendar();
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 45);
         cal.set(Calendar.SECOND, 00);
-        long endTime = cal.getTimeInMillis();
+
+       /* cal.set(Calendar.YEAR, endDate.YEAR);
+        cal.set(Calendar.MONTH, endDate.MONTH);
+        cal.set(Calendar.DAY_OF_MONTH, endDate.DAY_OF_MONTH);*/
+
+
+       long endTime = cal.getTimeInMillis();
 
         Log.i("GoogleFit1", " End Time: " + endTime);
 
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 15);
-        calendar.set(Calendar.SECOND, 0);
-        long startTime = calendar.getTimeInMillis();
+        //Calendar calendar = new GregorianCalendar();
+        cal.add(Calendar.WEEK_OF_YEAR, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 15);
+        cal.set(Calendar.SECOND, 0);
+
+        /*cal.set(Calendar.YEAR, startDate.YEAR);
+        cal.set(Calendar.MONTH, startDate.MONTH);
+        cal.set(Calendar.DAY_OF_MONTH, startDate.DAY_OF_MONTH);*/
+
+        long startTime = cal.getTimeInMillis();
         Log.i("GoogleFit1", "Start Time: " + startTime);
         Log.i("GoogleFit", "Range Start: " + dateFormat.format(startTime));
         Log.i("GoogleFit", "Range End: " + dateFormat.format(endTime));
@@ -221,4 +236,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    public void showDatePickerDialogStart(View v) {
+        DialogFragment newFragment = new TimePickerFragmentStart();
+        newFragment.show(getSupportFragmentManager(), "GoogleFit");
+    }
+
+    public void showDatePickerDialogEnd(View v) {
+        DialogFragment newFragment = new TimePickerFragmentEnd();
+        newFragment.show(getSupportFragmentManager(), "GoogleFit");
+    }
+
+    public static void setStartDate(int year, int month, int day){
+        startDate.set(year, month, day);
+    }
+    public static void setEndDate(int year, int month, int day){
+        endDate.set(year, month, day);
+    }
 }
