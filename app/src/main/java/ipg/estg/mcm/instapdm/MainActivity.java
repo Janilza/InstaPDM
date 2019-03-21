@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,22 +30,16 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.fitness.result.DataReadResult;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import static java.text.DateFormat.getDateInstance;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
@@ -58,17 +54,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int REQUEST_OAUTH = 1;
     public static final String TAG ="Mysteps";
 
+    private TextView steps;
+
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView((int) R.layout.activity_main);
-
-        /*mClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();*/
+        this.steps = findViewById(R.id.textViewSteps);
         createFitnessClient();
     }
 
@@ -108,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (menuItem.getItemId() != R.id.actionLogout) {
             return false;
         }
-        //new VerifyDataTask().execute();
-
         logOut();
 
         return true;
@@ -128,13 +118,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        /*Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();*/
-
         Calendar cal = new GregorianCalendar();
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 45);
@@ -143,11 +126,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         Log.i("GoogleFit1", " End Time: " + endTime);
 
-        /*cal.add(Calendar.WEEK_OF_YEAR, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 1);
-        cal.set(Calendar.SECOND, 0);*/
-
         Calendar calendar = new GregorianCalendar();
         calendar.add(Calendar.WEEK_OF_YEAR, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -155,20 +133,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         calendar.set(Calendar.SECOND, 0);
         long startTime = calendar.getTimeInMillis();
         Log.i("GoogleFit1", "Start Time: " + startTime);
-
-        //java.text.DateFormat dateFormat = getDateInstance();
-
         Log.i("GoogleFit", "Range Start: " + dateFormat.format(startTime));
         Log.i("GoogleFit", "Range End: " + dateFormat.format(endTime));
-
-
-        /*final DataSource ds = new DataSource.Builder()
-                .setAppPackageName("com.google.android.gms")
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setType(DataSource.TYPE_DERIVED)
-                .setStreamName("estimated_steps")
-                .build();*/
-
 
        DataReadRequest readRequest = new DataReadRequest.Builder()
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
@@ -194,12 +160,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 }
         );
-
-
     }
     public void processDataSet(DataSet dataSet){
-       // @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        //dateFormat.setTimeZone(TimeZone.getDefault());
         for(DataPoint dp : dataSet.getDataPoints()){
 
             long dpStartTime = dp.getStartTime(TimeUnit.MILLISECONDS);
@@ -214,16 +176,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 String fieldName = field.getName();
                 Log.i("GoogleFit", "\tField: " + fieldName + "Value: "+ dp.getValue(field));
                 Toast.makeText(context,"\tField"+ fieldName + "Value: "+ dp.getValue(field), Toast.LENGTH_LONG).show();
+                steps.setText(dp.getValue(field)+" Passos");
             }
 
         }
     }
 
-
     @Override
-    public void onConnectionSuspended(int i) {
-        //
-    }
+    public void onConnectionSuspended(int i) {}
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -231,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             try {
                 authInProgress = true;
                 connectionResult.startResolutionForResult( MainActivity.this, REQUEST_OAUTH );
-                Log.i(TAG, "A conectar...");
+                Log.i("GoogleFit", "A conectar...");
 
             } catch(IntentSender.SendIntentException e ) {
 
