@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Steps</string>
+    <string name="insert_email">Insert your email</string>
+    <string name="insert_password">Insert your password</string>
+    <string name="insertEmail">Insert your email</string>
+    <string name="register_text">Don´t have account yet?</string>
+    <string name="entrar">Login</string>
+    <string name="create_account">Create new account</string>
+    <string name="have_account">Already have account?</string>
+    <string name="repeat_password">Repeat password please</string>
+    <string name="about">about</string>
+    <string name="account_settings">Account settings</string>
+    <string name="logout">Logout</string>
+    <string name="string_error">" Error:"</string>
+    <string name="register_success_string">Account created with success</string>
+    <string name="password_register_error">Password and confirm password don´t matches</string>
+    <string name="profile">Profile</string>
+    <string name="my_steps">My Steps</string>
+    <string name="steps">Steps</string>
+    <string name="connection_failed">connection failed!!!</string>
+</resources>

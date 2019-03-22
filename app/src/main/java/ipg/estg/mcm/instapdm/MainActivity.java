@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         this.mAuth = FirebaseAuth.getInstance();
         this.mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(this.mainToolbar);
-        (Objects.requireNonNull(getSupportActionBar())).setTitle("My Steps");
+        (Objects.requireNonNull(getSupportActionBar())).setTitle(R.string.my_steps);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -190,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             for(Field field: dp.getDataType().getFields()){
                 String fieldName = field.getName();
                 Log.i("GoogleFit", "\tField: " + fieldName + "Value: "+ dp.getValue(field));
-                Toast.makeText(context,"\tField"+ fieldName + "Value: "+ dp.getValue(field), Toast.LENGTH_LONG).show();
-                steps.setText(dp.getValue(field)+" Passos");
+                //Toast.makeText(context,"\tField"+ fieldName + "Value: "+ dp.getValue(field), Toast.LENGTH_LONG).show();
+                steps.setText(dp.getValue(field)+ " "+getString(R.string.steps));
             }
 
         }
@@ -214,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } else {
             Log.e( "GoogleFit", "authInProgress" );
             Log.i("GoogleFit", "A conexão falhou!!!");
-            Toast.makeText(context,"A conexão falhou!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(context,getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
         }
     }
 

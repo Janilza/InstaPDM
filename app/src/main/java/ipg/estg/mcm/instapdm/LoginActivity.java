@@ -27,13 +27,13 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        setContentView((int) R.layout.activity_login);
+        setContentView( R.layout.activity_login);
         this.mAuth = FirebaseAuth.getInstance();
-        this.loginEmailText = (EditText) findViewById(R.id.register_email);
-        this.loginPassText = (EditText) findViewById(R.id.repeat_password);
-        this.loginButton = (Button) findViewById(R.id.loginButton);
-        this.loginRegister = (Button) findViewById(R.id.loginRegister);
-        this.loginProgress = (ProgressBar) findViewById(R.id.loginProgressBar);
+        this.loginEmailText = findViewById(R.id.register_email);
+        this.loginPassText = findViewById(R.id.repeat_password);
+        this.loginButton =  findViewById(R.id.loginButton);
+        this.loginRegister = findViewById(R.id.loginRegister);
+        this.loginProgress = findViewById(R.id.loginProgressBar);
         this.loginRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 LoginActivity.this.startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
@@ -42,11 +42,11 @@ public class LoginActivity extends AppCompatActivity {
 
         this.loginButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
-                String obj = LoginActivity.this.loginEmailText.getText().toString();
-                String obj2 = LoginActivity.this.loginPassText.getText().toString();
-                if (!TextUtils.isEmpty(obj) && !TextUtils.isEmpty(obj2)) {
+                String email = LoginActivity.this.loginEmailText.getText().toString();
+                String pass = LoginActivity.this.loginPassText.getText().toString();
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
                     LoginActivity.this.loginProgress.setVisibility(View.VISIBLE);
-                    LoginActivity.this.mAuth.signInWithEmailAndPassword(obj, obj2).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    LoginActivity.this.mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 LoginActivity.this.sendToMainActivity();
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String message = task.getException().getMessage();
                                 Context context = LoginActivity.this;
                                 StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append("Error : ");
+                                stringBuilder.append(R.string.string_error);
                                 stringBuilder.append(message);
                                 Toast.makeText(context, stringBuilder.toString(), Toast.LENGTH_LONG).show();
 

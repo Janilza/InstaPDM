@@ -63,6 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         profileToolbar = findViewById(R.id.profile_toolbar);
         setSupportActionBar(this.profileToolbar);
-        (Objects.requireNonNull(getSupportActionBar())).setTitle("Perfil");
+        (Objects.requireNonNull(getSupportActionBar())).setTitle(R.string.profile);
     }
 }

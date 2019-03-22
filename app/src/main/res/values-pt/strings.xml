@@ -1,11 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">My Steps</string>
-    <string name="loginpagelogo" translatable="false">LoginPageLogo</string>
     <string name="insert_email">Insira o seu email</string>
-    <string name="insert_password">Insira a sua password</string>
+    <string name="insert_password">Insira a sua passwordInsira a sua password</string>
     <string name="insertEmail">Insira o seu email</string>
     <string name="register_text">Ainda não possui uma conta?</string>
-    <string name="loginbutton" translatable="false">LoginButton</string>
     <string name="entrar">Entrar</string>
     <string name="create_account">Criar uma nova conta</string>
     <string name="have_account">Já tem uma conta?</string>
@@ -18,6 +17,6 @@
     <string name="password_register_error">A password inserida e a password de confirmação não coincidem</string>
     <string name="profile">Perfil</string>
     <string name="my_steps">My Steps</string>
-    <string name="steps"> Passos</string>
+    <string name="steps">Passos</string>
     <string name="connection_failed">A conexão falhou!!!</string>
 </resources>

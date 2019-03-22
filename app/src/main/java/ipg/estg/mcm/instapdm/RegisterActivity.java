@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
 
-                                    Toast.makeText(RegisterActivity.this, "Account created succesfuly",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(RegisterActivity.this, getString(R.string.register_success_string),Toast.LENGTH_LONG).show();
 
                                     //sendToProfile();
                                     sendToMain();
@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     String message = task.getException().getMessage();
                                     Context context = RegisterActivity.this;
                                     StringBuilder stringBuilder = new StringBuilder();
-                                    stringBuilder.append("Error : ");
+                                    stringBuilder.append(R.string.string_error);
                                     stringBuilder.append(message);
 
                                     Toast.makeText(context, stringBuilder.toString(),Toast.LENGTH_LONG).show();
@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Toast.makeText(RegisterActivity.this, "Confirm Password and Password Field doesn't match.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, getString(R.string.password_register_error),Toast.LENGTH_LONG).show();
                 }
             }
         });
