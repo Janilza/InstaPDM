@@ -1,6 +1,16 @@
 # MySteps
 Aplicação android que recebe dados relativos aos passos de um dado utilizador com recurso a API do Google Fit.
 
+Aspetos da aplicação:
+<ul>
+  <li>Dados armazenados no Firebase</li>
+  <li>Login</li>
+  <li>Registo</li>
+  <li>Acesso a API do Google Fit - History API</li>
+  <li>Uso de ProgressBar</li>
+  <li>Internacionalização</li>
+</ul>
+
 
 <a href="http://tinypic.com?ref=2usa681" target="_blank"><img src="http://i65.tinypic.com/2usa681.jpg" border="0" alt="Login" height="450" width="250"></a>
 
