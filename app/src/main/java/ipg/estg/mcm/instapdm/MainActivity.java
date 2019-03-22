@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        setContentView((int) R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         this.steps = findViewById(R.id.textViewSteps);
         createFitnessClient();
     }
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         this.mAuth = FirebaseAuth.getInstance();
         this.mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(this.mainToolbar);
-        ((ActionBar) Objects.requireNonNull(getSupportActionBar())).setTitle((CharSequence) "My Steps");
+        (Objects.requireNonNull(getSupportActionBar())).setTitle("My Steps");
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();

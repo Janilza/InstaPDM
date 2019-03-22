@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
+
     private Button loginRegisterButton;
     private FirebaseAuth mAuth;
     private Button registerButton;
@@ -27,47 +28,60 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText repeatPassText;
 
     protected void onCreate(Bundle bundle) {
+
         super.onCreate(bundle);
-        setContentView((int) R.layout.activity_register);
-        this.mAuth = FirebaseAuth.getInstance();
-        this.registerEmailText = (EditText) findViewById(R.id.register_email);
-        this.registerPassText = (EditText) findViewById(R.id.register_password);
-        this.repeatPassText = (EditText) findViewById(R.id.repeat_password);
-        this.registerButton = (Button) findViewById(R.id.registerButton);
-        this.loginRegisterButton = (Button) findViewById(R.id.registerLogin);
-        this.registerProgressBar = (ProgressBar) findViewById(R.id.registerProgressBar);
-        this.loginRegisterButton.setOnClickListener(new OnClickListener() {
+        setContentView( R.layout.activity_register);
+        mAuth = FirebaseAuth.getInstance();
+        registerEmailText =  findViewById(R.id.register_email);
+        registerPassText =  findViewById(R.id.register_password);
+        repeatPassText =  findViewById(R.id.repeat_password);
+        registerButton =  findViewById(R.id.registerButton);
+        loginRegisterButton =  findViewById(R.id.registerLogin);
+        registerProgressBar =  findViewById(R.id.registerProgressBar);
+
+        loginRegisterButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
-                RegisterActivity.this.finish();
+                finish();
             }
         });
-        this.registerButton.setOnClickListener(new OnClickListener() {
+        registerButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
-                String email = RegisterActivity.this.registerEmailText.getText().toString();
-                String pass= RegisterActivity.this.registerPassText.getText().toString();
-                String confirm_pass = RegisterActivity.this.repeatPassText.getText().toString();
+                String email = registerEmailText.getText().toString();
+                String pass = registerPassText.getText().toString();
+                String confirm_pass = repeatPassText.getText().toString();
+
                 if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) & !TextUtils.isEmpty(confirm_pass)) {
+
                     if (pass.equals(confirm_pass)) {
-                        RegisterActivity.this.registerButton.setVisibility(View.VISIBLE);
-                        RegisterActivity.this.mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+                        registerProgressBar.setVisibility(View.VISIBLE);
+                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             public void onComplete(@NonNull Task<AuthResult> task) {
+
                                 if (task.isSuccessful()) {
-                                    RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                    RegisterActivity.this.finish();
+
+                                    Toast.makeText(RegisterActivity.this, "Account created succesfuly",Toast.LENGTH_LONG).show();
+
+                                    //sendToProfile();
+                                    sendToMain();
+
+
                                 } else {
                                     String message = task.getException().getMessage();
                                     Context context = RegisterActivity.this;
                                     StringBuilder stringBuilder = new StringBuilder();
                                     stringBuilder.append("Error : ");
                                     stringBuilder.append(message);
+
                                     Toast.makeText(context, stringBuilder.toString(),Toast.LENGTH_LONG).show();
                                 }
-                                RegisterActivity.this.registerProgressBar.setVisibility(View.INVISIBLE);
+                                registerProgressBar.setVisibility(View.INVISIBLE);
                             }
                         });
                         return;
                     }
-                    Toast.makeText(RegisterActivity.this, "Confirm Password and Password Field doesn't match.", 1).show();
+
+                    Toast.makeText(RegisterActivity.this, "Confirm Password and Password Field doesn't match.",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -75,13 +89,18 @@ public class RegisterActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        if (this.mAuth.getCurrentUser() != null) {
-            sendToMain();
+        if (mAuth.getCurrentUser() != null) {
+           // sendToProfile();
+           sendToMain();
         }
     }
 
     private void sendToMain() {
         startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+    private void sendToProfile(){
+        startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
         finish();
     }
 }
